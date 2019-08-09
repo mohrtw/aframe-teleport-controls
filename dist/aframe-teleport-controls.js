@@ -89,7 +89,7 @@
 	    curveMissColor: {type: 'color', default: '#ff0000'},
 	    curveShootingSpeed: {default: 5, min: 0, if: {type: ['parabolic']}},
 	    defaultPlaneSize: { default: 100 },
-	    landingNormal: {type: 'vec3', default: '0 1 0'},
+	    landingNormal: {type: 'vec3', default: { x: 0, y: 1, z: 0 }},
 	    landingMaxAngle: {default: '45', min: 0, max: 360},
 	    drawIncrementally: {default: false},
 	    incrementalDrawMs: {default: 700},
@@ -369,7 +369,7 @@
 	      if (rig.object3D.parent) {
 	        rig.object3D.parent.worldToLocal(newRigLocalPosition);
 	      }
-	      rig.setAttribute('position', newRigLocalPosition);
+	      rig.object3D.position.set(newRigLocalPosition.x, newRigLocalPosition.y, newRigLocalPosition.z);
 
 	      // If a rig was not explicitly declared, look for hands and mvoe them proportionally as well
 	      if (!this.data.cameraRig) {
@@ -380,7 +380,7 @@
 	          // diff = rigWorldPosition - handPosition
 	          // newPos = newRigWorldPosition - diff
 	          newHandPosition[i].copy(this.newRigWorldPosition).sub(this.rigWorldPosition).add(handPosition);
-	          hands[i].setAttribute('position', newHandPosition[i]);
+	          hands[i].object3D.position.set(newHandPosition[i]);
 	        }
 	      }
 
@@ -417,7 +417,7 @@
 	      this.line.material.color.set(this.curveHitColor);
 	      this.line.material.opacity = this.data.hitOpacity;
 	      this.line.material.transparent= this.data.hitOpacity < 1;
-	      this.hitEntity.setAttribute('position', point);
+	      this.hitEntity.object3D.position.set(point.x, point.y, point.z);
 	      this.hitEntity.setAttribute('visible', true);
 
 	      this.hit = true;
@@ -466,7 +466,7 @@
 	    radius: data.hitCylinderRadius,
 	    radiusTubular: 0.01
 	  });
-	  torus.setAttribute('rotation', {x: 90, y: 0, z: 0});
+	  torus.object3D.rotation.set(Math.PI/2, 0, 0);
 	  torus.setAttribute('material', {
 	    shader: 'flat',
 	    color: data.hitCylinderColor,
@@ -477,7 +477,7 @@
 
 	  // Cylinder.
 	  cylinder = document.createElement('a-entity');
-	  cylinder.setAttribute('position', {x: 0, y: data.hitCylinderHeight / 2, z: 0});
+	  cylinder.object3D.position.set(0, data.hitCylinderHeight / 2, 0);
 	  cylinder.setAttribute('geometry', {
 	    primitive: 'cylinder',
 	    segmentsHeight: 1,
@@ -502,7 +502,7 @@
 	  var geometry;
 	  var material;
 
-	  geometry = new THREE.PlaneBufferGeometry(100, 100);
+	  geometry = new THREE.PlaneBufferGeometry(size, size);
 	  geometry.rotateX(-Math.PI / 2);
 	  material = new THREE.MeshBasicMaterial({color: 0xffff00});
 	  return new THREE.Mesh(geometry, material);

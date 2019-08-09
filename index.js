@@ -323,7 +323,7 @@ AFRAME.registerComponent('teleport-controls', {
       if (rig.object3D.parent) {
         rig.object3D.parent.worldToLocal(newRigLocalPosition);
       }
-      rig.setAttribute('position', newRigLocalPosition);
+      rig.object3D.position.set(newRigLocalPosition.x, newRigLocalPosition.y, newRigLocalPosition.z);
 
       // If a rig was not explicitly declared, look for hands and mvoe them proportionally as well
       if (!this.data.cameraRig) {
@@ -334,7 +334,7 @@ AFRAME.registerComponent('teleport-controls', {
           // diff = rigWorldPosition - handPosition
           // newPos = newRigWorldPosition - diff
           newHandPosition[i].copy(this.newRigWorldPosition).sub(this.rigWorldPosition).add(handPosition);
-          hands[i].setAttribute('position', newHandPosition[i]);
+          hands[i].object3D.position.set(newHandPosition[i]);
         }
       }
 
@@ -371,7 +371,7 @@ AFRAME.registerComponent('teleport-controls', {
       this.line.material.color.set(this.curveHitColor);
       this.line.material.opacity = this.data.hitOpacity;
       this.line.material.transparent= this.data.hitOpacity < 1;
-      this.hitEntity.setAttribute('position', point);
+      this.hitEntity.object3D.position.set(point.x, point.y, point.z);
       this.hitEntity.setAttribute('visible', true);
 
       this.hit = true;
@@ -420,7 +420,7 @@ function createHitEntity (data) {
     radius: data.hitCylinderRadius,
     radiusTubular: 0.01
   });
-  torus.setAttribute('rotation', {x: 90, y: 0, z: 0});
+  torus.object3D.rotation.set(Math.PI/2, 0, 0);
   torus.setAttribute('material', {
     shader: 'flat',
     color: data.hitCylinderColor,
@@ -431,7 +431,7 @@ function createHitEntity (data) {
 
   // Cylinder.
   cylinder = document.createElement('a-entity');
-  cylinder.setAttribute('position', {x: 0, y: data.hitCylinderHeight / 2, z: 0});
+  cylinder.object3D.position.set(0, data.hitCylinderHeight / 2, 0);
   cylinder.setAttribute('geometry', {
     primitive: 'cylinder',
     segmentsHeight: 1,
